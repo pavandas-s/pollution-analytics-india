@@ -4,3 +4,5 @@ data/row_counts_total/
 data/row_counts_distinct/
 data/row_counts_clean/
 *.crc
+.RData
+.Rhistory
