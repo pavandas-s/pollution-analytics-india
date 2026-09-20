@@ -1,0 +1,6 @@
+data/cleaned_output_v2/
+data/cleaned_seasonal/
+data/row_counts_total/
+data/row_counts_distinct/
+data/row_counts_clean/
+*.crc
