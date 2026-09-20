@@ -51,3 +51,14 @@ correlation_value <- cor(df$Avg_PM25, df$Avg_AQI, use = "complete.obs")
 print(paste("Correlation between PM2.5 and AQI:", round(correlation_value, 3)))
 
 cat("Analysis complete. Charts saved to /outputs\n")
+seasonal_df <- read.csv("data/cleaned_seasonal.csv", header = FALSE,
+                        col.names = c("City", "Season", "Avg_AQI"))
+seasonal_df$Season <- factor(seasonal_df$Season, levels = c("Winter", "Summer", "Monsoon", "Autumn"))
+
+p4 <- ggplot(seasonal_df %>% filter(City %in% top_cities), 
+             aes(x = Season, y = Avg_AQI, fill = Season)) +
+  geom_col() +
+  facet_wrap(~City) +
+  labs(title = "Seasonal AQI Patterns — Top 6 Cities", y = "Average AQI") +
+  theme_minimal()
+ggsave("outputs/seasonal_patterns.png", p4, width = 9, height = 6)
