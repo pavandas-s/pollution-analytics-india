@@ -1,14 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 st.set_page_config(page_title="India Air Quality Dashboard", layout="wide")
 st.title("🌫️ Pollution Percentage Analysis in India")
 st.caption("PB ADT 504 – Big Data Analytics | Group 2")
 
-df = pd.read_csv("cleaned_yearly.csv", header=None,
+# Build paths relative to this script's own location, not the working directory
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+df = pd.read_csv(os.path.join(APP_DIR, "cleaned_yearly.csv"), header=None,
                   names=["City", "Year", "Avg_AQI", "Avg_PM25", "Avg_PM10"])
-seasonal_df = pd.read_csv("cleaned_seasonal.csv", header=None,
+seasonal_df = pd.read_csv(os.path.join(APP_DIR, "cleaned_seasonal.csv"), header=None,
                            names=["City", "Season", "Avg_AQI"])
 
 cities = sorted(df["City"].unique())
