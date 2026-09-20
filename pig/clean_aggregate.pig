@@ -41,3 +41,25 @@ clean_rows = FOREACH (GROUP clean_data ALL) GENERATE COUNT(clean_data) AS clean_
 STORE total_rows INTO 'C:/Users/user/Documents/pollution-analytics-india/data/row_counts_total' USING PigStorage(',');
 STORE distinct_rows INTO 'C:/Users/user/Documents/pollution-analytics-india/data/row_counts_distinct' USING PigStorage(',');
 STORE clean_rows INTO 'C:/Users/user/Documents/pollution-analytics-india/data/row_counts_clean' USING PigStorage(',');
+
+-- Extract month and map to season
+with_season = FOREACH clean_data GENERATE 
+    City, 
+    SUBSTRING(Date, 5, 7) AS Month, 
+    AQI;
+
+seasonal = FOREACH with_season GENERATE 
+    City,
+    (
+      (Month == '12' OR Month == '01' OR Month == '02') ? 'Winter' :
+      ((Month == '03' OR Month == '04' OR Month == '05') ? 'Summer' :
+      ((Month == '06' OR Month == '07' OR Month == '08') ? 'Monsoon' : 'Autumn'))
+    ) AS Season,
+    AQI;
+grouped_season = GROUP seasonal BY (City, Season);
+seasonal_avg = FOREACH grouped_season GENERATE 
+    FLATTEN(group) AS (City, Season), 
+    AVG(seasonal.AQI) AS Avg_AQI;
+
+STORE seasonal_avg INTO 'C:/Users/user/Documents/pollution-analytics-india/data/cleaned_seasonal' 
+    USING PigStorage(',');
